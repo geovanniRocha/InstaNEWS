@@ -1,1 +1,3 @@
-# asd
+# InstaNEWS
+
+API de noticias
