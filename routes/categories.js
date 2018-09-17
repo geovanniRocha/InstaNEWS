@@ -59,4 +59,19 @@ router.delete("/:tk", function(req, res) {
   return 200; 
 });
 
+router.get('/:id/news', function(req, res, next){
+  var id = req.params.id;
+  knex.select().from('categories').where("idcategories", id)
+  
+  .innerJoin("feed","feed.categories_idcategories", 'categories.idcategories')
+  .innerJoin('news', 'news.feed_idfeed','feed.idfeed') 
+  .orderBy("news.date","DESC")
+  .timeout(1000)
+  .then(rQuery =>{
+    res.send(rQuery)
+  })
+ 
+})
+
+
 module.exports = router;

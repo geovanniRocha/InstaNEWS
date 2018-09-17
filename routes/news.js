@@ -3,15 +3,18 @@ var router = express.Router();
 const _ = require('lodash')
 var knex = require('./db')
   
+//pegar thumbanail e categoria
 router.get('/:tk', function(req, res, next) { 
   var id = req.params.tk;
-  knex.select(["news.Title", "news.description", 'news.url', "news.date"])  .from('users').where("users.token", id)
+  knex.select(
+    //["news.Title", "news.description", 'news.url', "news.date"]
+    ).from('users').where("users.token", id)
   .innerJoin("subscription",  'users.idusers',"subscription.users_idusers")
   .innerJoin("feed","feed.idfeed", 'subscription.feed_idfeed')
   .innerJoin('news', 'news.feed_idfeed','feed.idfeed') 
   .orderBy("news.date","DESC")
   .timeout(1000)
- 
+ //no rSet 
   .then(rSet =>{
     if(_.size(rSet) > 0){
       out = {
@@ -23,16 +26,15 @@ router.get('/:tk', function(req, res, next) {
 
     }
     else{
-      out = {
-        status:'erro'
-      }
-      res.send(out)
+       res.send(404);
     }
   }) 
  
   return 200;  
 });
- 
+
+
+
 router.get('/', function(req, res, next) {
 
   knex.select().from('news').limit(100).orderBy("news.date","DESC").timeout(1000).then(rSet =>{
