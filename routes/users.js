@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var knex = require('./db')
+const _ = require('lodash')
+const sha1 = require("sha1")
  
 /* GET users listing. */
 /*
@@ -27,12 +29,25 @@ router.get('/', function(req, res, next) {
  // next()
 });
 router.post('/', function(req, res) {
- var em = req.body.email;
+ global.em = req.body.email;
  //var tk = req.body.token;
   //knex("users").where("email", id).update("token",'tk').then();
   knex.select('users.token').from('users').where("email", em).timeout(1000)  
   .then(rSet =>{
-    res.send(rSet);
+    if(_.isEmpty(rSet)){
+      var r = knex('users').insert({
+        email:em,
+        token: sha1(em),
+        lastUpdate:Date.now()
+      }).then(r=>{
+        res.send(r)
+      })      
+    }
+    knex.select('users.token').from('users').where("email", em).timeout(1000)  
+    .then(rSet =>{
+      res.send(rSet);
+    })
+    // console.log(rSet)
   }) 
   return 200; 
 });
