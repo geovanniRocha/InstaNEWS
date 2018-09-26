@@ -3,22 +3,33 @@ var router = express.Router();
 const _ = require('lodash')
 var knex = require('./db')
   
-router.get('/:tk', function(req, res, next) {
-   var id = req.params.tk;
-  knex.select(['users.email', 'categories.name']).from('users').where("users.token", id)
-  .innerJoin('users_has_categories', 'users.idusers', 'users_idusers')
-  .innerJoin('categories', 'categories.idcategories','users_has_categories.categories_idcategories')
-  .timeout(1000)
-  
-  .then(rSet =>{
-    res.send(rSet);
-  }) 
-  return 200;
+router.get('/', function(req, res, next) {
+  var id = req.headers.authorization;
+  console.log(id);
+  if(req.headers.hasOwnProperty('authorization')){
+    knex.select(['users.email', 'categories.name']).from('users').where("users.token", id)
+    .innerJoin('users_has_categories', 'users.idusers', 'users_idusers')
+    .innerJoin('categories', 'categories.idcategories','users_has_categories.categories_idcategories')
+    .timeout(1000)
+    
+    .then(rSet =>{
+      res.send(rSet);
+    }).error(e=>{
+      res.send({erro:"Usuario nao identificado"})
+    })
+    return 200;
+  }else{
+    knex.select().from('categories').timeout(1000).limit(20).then(rSet =>{
+      res.send(rSet);
+    }) 
+    return 200;
+  }
   // next()
 });
- 
-router.get('/', function(req, res, next) {
 
+/*
+router.get('/', function(req, res, next) {
+  console.log();
   knex.select().from('categories').timeout(1000).limit(20).then(rSet =>{
     res.send(rSet);
   }) 
@@ -26,6 +37,7 @@ router.get('/', function(req, res, next) {
  // res.send(resp);
  // next()
 });
+*/
 
 router.post('/', function(req, res) {
   var token = req.body.token;
@@ -69,6 +81,8 @@ router.get('/:id/news', function(req, res, next){
   .timeout(1000)
   .then(rQuery =>{
     res.send(rQuery)
+  }).error((e)=>{
+    res.send(e)
   })
  
 })

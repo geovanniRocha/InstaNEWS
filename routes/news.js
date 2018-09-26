@@ -7,7 +7,7 @@ var knex = require('./db')
 router.get('/:tk', function(req, res, next) { 
   var id = req.params.tk;
   knex.select(
-    //["news.Title", "news.description", 'news.url', "news.date"]
+    ["news.Title", "news.description", 'news.url', "news.date"]
     ).from('users').where("users.token", id)
   .innerJoin("subscription",  'users.idusers',"subscription.users_idusers")
   .innerJoin("feed","feed.idfeed", 'subscription.feed_idfeed')
