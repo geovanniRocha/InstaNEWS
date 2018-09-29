@@ -5,30 +5,14 @@ const sha1 = require("sha1")
  
 
 
-//return a token, if email dont exists create a news user and send his token
+//return a token
 router.post('/', function(req, res) {
- global.em = req.body.email;
-  
+  global.em = req.body.email;
   knex.select('users.token').from('users').where("email", em).timeout(1000)  
   .then(rSet =>{
-    if(_.isEmpty(rSet)){
-      var r = knex('users').insert({
-        email:em,
-        token: sha1(em),
-        lastUpdate:Date.now().toPrecision()
-      }).then(r=>{
-        knex.select('users.token').from('users').where("email", em).timeout(1000)  
-        .then(rSet =>{
-          res.send(rSet);
-        })
-      })      
-    }
-    else{
-      res.send(rSet);
-    }
-    
-   
-  }) 
+   res.send(rSet);
+  })
+      
   return 200; 
 });
 

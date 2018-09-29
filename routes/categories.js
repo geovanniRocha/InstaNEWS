@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
   var id = req.headers.authorization;
   console.log(id);
   if(req.headers.hasOwnProperty('authorization')){
-    knex.select(['users.email', 'categories.name']).from('users').where("users.token", id)
+    knex.select(['categories.idcategories', 'categories.name']).from('users').where("users.token", id)
     .innerJoin('users_has_categories', 'users.idusers', 'users_idusers')
     .innerJoin('categories', 'categories.idcategories','users_has_categories.categories_idcategories')
     .timeout(1000)
@@ -27,40 +27,31 @@ router.get('/', function(req, res, next) {
   // next()
 });
 
-/*
-router.get('/', function(req, res, next) {
-  console.log();
-  knex.select().from('categories').timeout(1000).limit(20).then(rSet =>{
-    res.send(rSet);
-  }) 
-  return 200;
- // res.send(resp);
- // next()
-});
-*/
-
 router.post('/', function(req, res) {
-  var token = req.body.token;
+  var token = req.headers.authorization;
   var categoriesArray = req.body.categories;
   knex.select('idusers').from('users').where("users.token", token).then (e=>{
-    console.log(e);
-      global.data = {
-        users_idusers : e[0].idusers,
-        categories_idcategories: categoriesArray
-        }
-      _.forEach(categoriesArray, p=>{
-        knex('users_has_categories').insert({
-          users_idusers :global.data.users_idusers,
-          categories_idcategories: p
-        }).then(e=>{
-          console.log(e)
-        })   
-      }) 
+     
+    global.data = {
+      users_idusers : e[0].idusers,
+      categories_idcategories: categoriesArray
+    }
+    console.log(global.data)
+    _.forEach(categoriesArray, p=>{
+      knex('users_has_categories').insert({
+        users_idusers :global.data.users_idusers,
+        categories_idcategories: p
+      }).then(e=>{
+        console.log(e)
+        
+        res.send(e) 
+      })   
+    }) 
   })    
-  res.send("OK") 
   return 200; 
 });
 
+/*
 router.delete("/:tk", function(req, res) { 
   var tk = req.params.tk;
   knex.select('idusers').from('users').where("users.token",tk).then(resp=>{
@@ -71,8 +62,8 @@ router.delete("/:tk", function(req, res) {
   return 200; 
 });
 
-router.get('/:id/news', function(req, res, next){
-  var id = req.params.id;
+router.get('/news', function(req, res, next){
+  var id =  req.headers.authorization;
   knex.select().from('categories').where("idcategories", id)
   
   .innerJoin("feed","feed.categories_idcategories", 'categories.idcategories')
@@ -86,6 +77,5 @@ router.get('/:id/news', function(req, res, next){
   })
  
 })
-
-
+*/
 module.exports = router;

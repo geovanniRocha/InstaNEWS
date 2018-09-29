@@ -4,22 +4,18 @@ var knex = require('./db')
 const _ = require('lodash')
 const sha1 = require("sha1")
  
-/* GET users listing. */
-/*
-router.get('/:email', function(req, res, next) {
-  // res.send(JSON.stringify(req.params));
-  var id = req.params.id;
-  knex.select('token').from('users').where("users.email", id) 
-  .timeout(1000)
-  
+//Get * from user
+router.get('/', function(req, res, next) {
+  var tk = req.headers.authorization
+  knex.select().from('users').where("users.token", tk) .timeout(1000)  
   .then(rSet =>{
     res.send(rSet);
   }) 
-  return 200;
-  // next()
+  return 200; 
 });
-*/
-router.get('/', function(req, res, next) {
+
+//DEBUG
+router.get('/DEBUG', function(req, res, next) {
 
   knex.select().from('users').limit(100).timeout(1000).then(rSet =>{
     res.send(rSet);
@@ -28,28 +24,35 @@ router.get('/', function(req, res, next) {
  // res.send(resp);
  // next()
 });
+
+//Add a new user by email
 router.post('/', function(req, res) {
- global.em = req.body.email;
- //var tk = req.body.token;
-  //knex("users").where("email", id).update("token",'tk').then();
+  global.em = req.body.email;
+  
   knex.select('users.token').from('users').where("email", em).timeout(1000)  
   .then(rSet =>{
     if(_.isEmpty(rSet)){
       var r = knex('users').insert({
         email:em,
         token: sha1(em),
-        lastUpdate:Date.now()
+        lastUpdate:Date.now().toPrecision()
       }).then(r=>{
-        res.send(r)
+        knex.select('users.token').from('users').where("email", em).timeout(1000)  
+        .then(rSet =>{
+          res.send(rSet);
+        })
       })      
     }
-    knex.select('users.token').from('users').where("email", em).timeout(1000)  
-    .then(rSet =>{
-      res.send(rSet);
-    })
-    // console.log(rSet)
+   
   }) 
   return 200; 
 });
 
+router.delete('/',function(req, res) {
+  var tk = req.headers.authorization
+  knex("users").where('token', tk).del().then()
+  res.send(200)
+  return 200;
+
+})
 module.exports = router;
