@@ -27,24 +27,31 @@ router.get('/DEBUG', function(req, res, next) {
 
 //Add a new user by email
 router.post('/', function(req, res) {
-  global.em = req.body.email;
-  
-  knex.select('users.token').from('users').where("email", em).timeout(1000)  
-  .then(rSet =>{
-    if(_.isEmpty(rSet)){
-      var r = knex('users').insert({
-        email:em,
-        token: sha1(em),
-        lastUpdate:Date.now().toPrecision()
-      }).then(r=>{
-        knex.select('users.token').from('users').where("email", em).timeout(1000)  
-        .then(rSet =>{
-          res.send(rSet);
+  var em = req.body.email;
+  if(req.body.hasOwnProperty('email')){
+    knex.select('users.token').from('users').where("email", em).timeout(1000).bind(em)
+    .then(rSet =>{
+      if(rSet.length == 0){
+        var r = knex('users').insert({
+          email:em,
+          token: sha1(em),
+          lastUpdate:Date.now().toPrecision()
+        }).then(r=>{
+          knex.select('users.token').from('users').where("email", em).timeout(1000)  
+          .then(rSet =>{
+            res.send(rSet);
+          })
         })
-      })      
-    }
-   
+  } else{
+        knex.select('users.token').from('users').where("email", em).timeout(1000)  
+          .then(rSet =>{
+            res.send(rSet);
+          });
+  }
   }) 
+  }else{
+    res.send({"status":"Erro"});
+  }
   return 200; 
 });
 

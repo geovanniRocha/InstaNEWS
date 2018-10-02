@@ -62,3 +62,8 @@ typings/
 
 # node-waf configuration
 .vscode
+
+#ignora a pasta BIN
+/bin
+
+/routes/db.js

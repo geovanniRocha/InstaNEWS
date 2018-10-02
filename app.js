@@ -1,5 +1,5 @@
 var createError = require('http-errors');
-var express = require('express'); 
+var express = require('express');  
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -20,6 +20,8 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
+
  
 
 app.use('/', indexRouter);
