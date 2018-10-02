@@ -16,7 +16,7 @@ DELETE | /login | Invalida o token do user
 
 Metodo | Path | Logado | Não Logado | JSON
 --- | --- | --- | --- | --- | ---
-GET | /categories | Retorna todas as categorias | Retorna todas as categorias do usuario
+GET | /categories | Retorna todas as categorias | Retorna todas as categorias do usuario |
 POST| /categories | Adiciona categorias no usuario |  | { "categories" : [`<ID CATEGORIAS>`] }
 
 
@@ -36,9 +36,9 @@ GET |  /news/category/`<ID cat>` | Retorna as noticias da categoria
 
 Metodo | Path | Logado | Não Logado | JSON
 --- | --- | --- | --- | --- | ---
-GET | /subs | Retorna todos os feeds de noticia possiveis | Retorna as inscroes do usuario 
+GET | /subs | Retorna todos os feeds de noticia possiveis | Retorna as inscroes do usuario | 
 POST| /subs | Adiciona os feeds de noticias ao usuario |  | {"subs": [`<ID FEED>`]}
-DELETE | /subs | Remove TODAS as incricoes do usuario 
+DELETE | /subs | Remove TODAS as incricoes do usuario |  |  
 
 
 ## Usuario 
