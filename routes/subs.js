@@ -6,7 +6,7 @@ var knex = require('./db')
 router.get('/', function(req, res, next) {
   
   var token = req.headers.authorization; 
-  if (token){
+  if(req.headers.hasOwnProperty('authorization')){
     knex.select().from('users').where("users.token", token)
     .innerJoin('subscription', 'users.idusers', 'users_idusers')
     .innerJoin('feed', 'feed.idfeed','subscription.feed_idfeed')
