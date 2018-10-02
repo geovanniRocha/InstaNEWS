@@ -50,7 +50,7 @@ router.post('/', function(req, res) {
 
 router.delete('/',function(req, res) {
   var tk = req.headers.authorization
-  knex("users").where('token', tk).del().then()
+  knex(" users").where('token', tk).del().then()
   res.send(200)
   return 200;
 
