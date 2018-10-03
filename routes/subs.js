@@ -1,47 +1,112 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+var router = express.Router()
 const _ = require('lodash')
 var knex = require('./db')
+var httpStatus = require('http-status-codes')
   
 router.get('/', function(req, res, next) {
   
-  var token = req.headers.authorization; 
+  let authorizationToken = req.headers.authorization; 
+
   if(req.headers.hasOwnProperty('authorization')){
-    knex.select().from('users').where("users.token", token)
+
+    let returnStatus = httpStatus.OK;
+
+    knex.select([
+      'users.idusers AS id',
+      'users.email',
+      'lastUpdate',
+      'feed.idfeed as feed_id',
+      'feed.name',
+      'feed.url',
+      'categories_idcategories as category_id'
+
+    ])
+    .from('users').where("users.token", authorizationToken)
     .innerJoin('subscription', 'users.idusers', 'users_idusers')
     .innerJoin('feed', 'feed.idfeed','subscription.feed_idfeed')
     .timeout(1000)
     .then(rSet =>{
       res.send(rSet);
-    }) 
-    return 200;
-  }else{
-    knex.select().from('feed').timeout(1000).limit(20).then(rSet =>{
-      res.send(rSet);
-    }) 
-    return 200;
-  } 
+    })
+    .error(e => {
+      
+      res.status(httpStatus.INTERNAL_SERVER_ERROR);
+  
+      res.send({
+        message: e.message
+      });
+  
+      returnStatus = httpStatus.INTERNAL_SERVER_ERROR;
+
+    })
+
+    return returnStatus;
+  }
+
+  knex.select([
+    'users.idusers AS id',
+    'users.email',
+    'lastUpdate',
+    'feed.idfeed as feed_id',
+    'feed.name',
+    'feed.url',
+    'categories_idcategories as category_id'
+
+  ])
+  .from('feed').timeout(1000).limit(20)
+  .then(rSet =>{
+
+    res.send(rSet);
+
+    return httpStatus.OK;
+  })
+  .error(e => {
+      
+    res.status(httpStatus.INTERNAL_SERVER_ERROR);
+
+    res.send({
+      message: e.message
+    });
+
+    return httpStatus.INTERNAL_SERVER_ERROR;
+
+  })
+  
 });
  
  
 
 router.post('/', function(req, res) {
-  var token = req.headers.authorization; 
-  var subsArray = req.body.subs;
-  knex.select('idusers').from('users').where("users.token", token).then (e=>{
-    console.log(e);
-      global.data = {
-        users_idusers : e[0].idusers,
+  
+  let token = req.headers.authorization; 
+  
+  let subsArray = req.body.subs;
+  
+  knex.select('idusers')
+  .from('users')
+  .where("users.token", token)
+  .then(result => {
+    
+    console.log(result);
+
+      let data = {
+        users_idusers : result[0].idusers,
         feed_idfeed: subsArray
-        }
-      _.forEach(subsArray, p=>{
+      }
+
+      subsArray.forEach(el => {
+        
         knex('subscription').insert({
-          users_idusers :global.data.users_idusers,
-          feed_idfeed: p
-        }).then(e=>{
-          console.log(e)
-        })   
-      }) 
+
+          users_idusers : data.users_idusers,
+          feed_idfeed   : el
+        })
+        .then(error=> {
+
+          console.log(error)
+        })
+      });
   })    
   res.send("OK") 
   return 200; 

@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');  
 
+// Routes
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var categoriesRouter = require('./routes/categories')
@@ -10,14 +11,15 @@ var loginRouter = require('./routes/login')
 
 var app = express();
 
-// view engine setup
- 
 // app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Allow CORS
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
 
@@ -43,9 +45,13 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+  console.log(err.message);
+
+  // respond user
   res.status(err.status || 500);
-  res.render('error');
+  res.send({
+    message : "INTERNAL SERVER ERROR"
+  });
 });
 
 module.exports = app;

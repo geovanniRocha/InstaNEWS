@@ -1,14 +1,12 @@
 var express = require('express');
 var router = express.Router();
-
-/* GET home page. */
-// router.get('/:id', function(req, res, next) {
-//   res.send(req.params.id);
-// });
+var httpStatus = require('http-status-codes')
 
 router.get('/', function(req, res, next) {
-  //res.send("ehue")
-  // res.send(JSON.stringify(req.params));
+  res.status(httpStatus.UNAUTHORIZED)
+  res.send({
+    message: "Unauthorized"
+  })
   
 });
 
