@@ -5,8 +5,7 @@ var express = require('express');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var categoriesRouter = require('./routes/categories')
-var newsRouter = require('./routes/news')
-var subsRouter = require('./routes/subs')
+var newsRouter = require('./routes/news') 
 var loginRouter = require('./routes/login')
 
 var app = express();
@@ -29,8 +28,7 @@ app.use(function(req, res, next) {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
-app.use('/news', newsRouter);
-app.use('/subs', subsRouter);
+app.use('/news', newsRouter); 
 app.use('/login', loginRouter);
  
 
