@@ -53,15 +53,6 @@ GET |  /news/like/`<palavra chave>` | Retorna as noticias que contenham a palavr
 GET |  /news/category/`<ID cat>` | Retorna as noticias da categoria
 
 
-## Subs 
-
-Metodo | Path | Logado | Não Logado | JSON
---- | --- | --- | --- | --- 
-GET | /subs | Retorna todos os feeds de noticia possiveis | Retorna as inscroes do usuario | 
-POST| /subs | Adiciona os feeds de noticias ao usuario |  | {"subs": [`<ID FEED>`]}
-DELETE | /subs | Remove TODAS as incricoes do usuario |  |  
-
-
 ## Usuario 
 Todas as requisicoes requerem o header authorization
 
