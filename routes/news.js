@@ -81,7 +81,7 @@ router.get('/category/:cat', function(req, res, next) {
 // Retorna as últimas 5 notícias.
 router.get('/breaking', function(req, res, next){
 
-  knex.select().from('news').limit(100).orderBy("news.date","DESC").timeout(1000).limit(5)
+  knex.select().from('news').where('idfeed',88 ).limit(100).orderBy("news.date","DESC").timeout(1000).limit(5)
   .then(rSet =>{
     
     res.send({
