@@ -50,17 +50,25 @@ router.post('/', function(req, res) {
   knex.select('idusers').from('users').where("users.token", authorizationToken)
   .then (result => {
     
-    knex('users_has_categories').where('users_idusers', result[0].idusers ).del().then();
+    knex('users_has_categories').where('users_idusers', result[0].idusers ).del().then().error();
 
     categories.forEach(category => {
-      
-      knex('users_has_categories').insert({
-        
+      knex().select()
+      .from("users_has_categories")
+      .where({ 
         users_idusers           : result[0].idusers,
-        categories_idcategories : category
-      })
-      .then()
+        categories_idcategories : category}).then(result=>{
+          if(result.length){
+            knex('users_has_categories').insert({
+        
+              users_idusers           : result[0].idusers,
+              categories_idcategories : category
+            })
+            .then()      
+          }
 
+        });
+      
 
     });
 
