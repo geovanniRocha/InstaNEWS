@@ -5,8 +5,8 @@ var knex = require('knex')({
     version: '5.7',
     connection: {
       host : '127.0.0.1',
-      user : 'instanews',
-      password : 'instanews',
+      user : 'root',
+      password : '',
       database : 'instanews2'
     }
   });

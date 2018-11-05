@@ -52,7 +52,7 @@ router.get('/category/:cat', function(req, res, next) {
     ["news.Title", "news.description", 'news.url', "news.date"]
   )
   .from('news')    
-  .innerJoin("feed","feed.idfeed", 'news.idnews')
+  .innerJoin("feed","feed.idfeed", 'news.feed_idfeed')
   .where('feed.categories_idcategories',category)
   .orderBy("news.date","DESC")
   .timeout(1000) 
