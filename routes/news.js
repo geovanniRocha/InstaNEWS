@@ -54,8 +54,9 @@ router.get('/category/:cat', function(req, res, next) {
   .from('news')    
   .innerJoin("feed","feed.idfeed", 'news.feed_idfeed')
   .where('feed.categories_idcategories',category)
-  .orderBy("news.date","DESC")
-  .timeout(1000) 
+  .orderBy("news.date","DESC").limit(25)  
+  .timeout(1000)
+	
   .then(rSet =>{
     
     res.send({
