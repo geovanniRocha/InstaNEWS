@@ -49,7 +49,7 @@ router.post('/', function(req, res) {
 
   knex.select('idusers').from('users').where("users.token", authorizationToken)
   .then (result => {
-    
+    //TODO: REMOVE
     //knex('users_has_categories').where('users_idusers', result[0].idusers ).del().then().error();
 
     categories.forEach(category => {
