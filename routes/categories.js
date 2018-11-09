@@ -15,6 +15,7 @@ router.get('/', function(req, res) {
     .innerJoin('users_has_categories', 'users.idusers', 'users_idusers')
     .innerJoin('categories', 'categories.idcategories','users_has_categories.categories_idcategories')
     .timeout(1000)
+    
     .then(rSet => {
 
       res.send(rSet);

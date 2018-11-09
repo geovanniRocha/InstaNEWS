@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const _ = require('lodash')
 var knex = require('./db')
+var elastic = require('./elastic')
 var httpStatus = require('http-status-codes');
   
 //retorna todas as noticias de um feed inscrito
@@ -79,6 +80,7 @@ router.get('/category/:cat', function(req, res, next) {
   })
 });
 
+
 // Retorna as últimas 5 notícias.
 router.get('/breaking', function(req, res, next){
 
@@ -106,6 +108,7 @@ router.get('/breaking', function(req, res, next){
   })
 
 });
+
 
 //retorna pesquisas que contenham fragmentos de palavras
 router.get('/like/:word', function(req, res){
@@ -140,7 +143,7 @@ router.get('/like/:word', function(req, res){
 
 router.get('/', function(req, res) {
 
-  knex.select().from('news').limit(100).orderBy("news.date","DESC").timeout(1000)
+  knex.select().from('news').limit(100).orderBy("news.date","DESC").timeout(10000)
   .then(rSet =>{
     
     res.send({
@@ -163,4 +166,120 @@ router.get('/', function(req, res) {
   })
 });
 
+//ELASTIC SEARCH \/
+
+//retorna as noticias da categoria pelo id
+router.get('/v2/category/:cat', function(req, res, next) { 
+  
+  let category = req.params.cat;
+  elastic.search({
+    index:"instanews",
+    body:{
+      query: {
+        match :{categories_idcategories : category}
+      },
+      sort:{date: { order : "desc" }}
+    }
+  })
+  .then(rSet =>{
+    
+    res.send({
+      status:'ok',
+      totalResults:_.size(rSet.hits.hits),
+      articles:rSet.hits.hits
+    });
+    
+    return httpStatus.OK;
+  }, err=> {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR);
+    res.send({message: e.message});
+    return httpStatus.INTERNAL_SERVER_ERROR;  
+  })
+});
+
+
+// Retorna as últimas 5 notícias.
+router.get('/v2/breaking', function(req, res, next){
+
+  elastic.search({
+    index:"instanews",
+    body:{
+    sort:{date: { order : "desc" }}
+    }
+  })
+  .then(rSet =>{
+    
+    res.send({
+      status:'ok',
+      totalResults:_.size(rSet.hits.hits),
+      articles:rSet.hits.hits
+    });
+    
+    return httpStatus.OK;
+  }, err=> {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR);
+    res.send({message: e.message});
+    return httpStatus.INTERNAL_SERVER_ERROR;  
+  })
+
+});
+
+
+//retorna pesquisas que contenham fragmentos de palavras
+router.get('/v2/like/:word', function(req, res){
+  
+  let word = req.params.word;
+  
+  elastic.search({
+    index:"instanews",
+    body:{
+      query: {
+        wildcard : {description : word }
+      },
+      sort:{date: { order : "desc" }}
+    }
+  })
+  .then(rSet =>{
+    
+    res.send({
+      status:'ok',
+      totalResults:_.size(rSet.hits.hits),
+      articles:rSet.hits.hits
+    });
+    
+    return httpStatus.OK;
+  }, err=> {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR);
+    res.send({message: e.message});
+    return httpStatus.INTERNAL_SERVER_ERROR;  
+  })
+});
+
+//Retorna 10 valores  do banco 
+router.get('/v2', function(req, res) {
+
+  elastic.search({
+    index:"instanews",
+    body:{
+    sort:{date: { order : "desc" }}
+    }
+  })
+  .then(rSet =>{
+    
+    res.send({
+      status:'ok',
+      totalResults:_.size(rSet.hits.hits),
+      articles:rSet.hits.hits
+    });
+    
+    return httpStatus.OK;
+  }, err=> {
+    res.status(httpStatus.INTERNAL_SERVER_ERROR);
+    res.send({message: e.message});
+    return httpStatus.INTERNAL_SERVER_ERROR;  
+  })
+
+
+})
+ 
 module.exports = router;
