@@ -57,17 +57,18 @@ router.post('/', function(req, res) {
       knex.select()
       .from("users_has_categories")
       .where({ 
-        users_idusers           : result[0].idusers,
-        categories_idcategories : category}).then(result=>{
+        users_idusers           : result[0].idusers
+      })
+      .then(result=> {
+
           if(result.length){
             knex('users_has_categories').insert({
-        
-              users_idusers           : result[0].idusers,
+
+              users_idusers           : result[0].users_idusers,
               categories_idcategories : category
             })
-            .then()      
+            .then()
           }
-
         });
       
 
@@ -97,7 +98,7 @@ router.delete("/", function(req, res) {
 
     res.send({
       message : 'Authorization token must be provided'
-    })
+    });
     
     return httpStatus.UNPROCESSABLE_ENTITY;
   }
@@ -127,7 +128,7 @@ router.delete("/", function(req, res) {
       })
       .del()
       .then(r => {
-        console.log(r)
+        // console.log(r)
       })
     });
 

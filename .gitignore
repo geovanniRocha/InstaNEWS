@@ -67,3 +67,5 @@ typings/
 /bin
 
 /routes/db.js
+
+.idea/*

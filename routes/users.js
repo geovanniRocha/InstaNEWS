@@ -120,7 +120,7 @@ router.post('/', function(req, res) {
     
       });
 
-  })
+  });
 
   return httpStatus.OK;
 
