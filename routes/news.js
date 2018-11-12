@@ -234,7 +234,7 @@ router.get('/v2/like/:word', function(req, res){
     index:"instanews",
     body:{
       query: {
-        wildcard : {description : word }
+        regexp : {description : word }
       },
       sort:{date: { order : "desc" }}
     }
