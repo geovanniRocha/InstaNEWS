@@ -80,7 +80,7 @@ router.post('/', function(req, res) {
         message: 'Categorias associada'
       });
 
-  })    
+  })
 
   return httpStatus.OK; 
 
@@ -98,7 +98,7 @@ router.delete("/", function(req, res) {
 
     res.send({
       message : 'Authorization token must be provided'
-    });
+    })
     
     return httpStatus.UNPROCESSABLE_ENTITY;
   }
